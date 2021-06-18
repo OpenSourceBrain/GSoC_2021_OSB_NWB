@@ -1,6 +1,23 @@
 ## Weekly status report for INCF
 
----
+### week of June 14
+
+_What have you been doing this week?_
+* submitted experimenter issue and tried fixing
+  * got more familiar with codebase, how to debug
+  * added potential fix and made pull request
+* got a workspace and repository with v2devOSB working
+* continued going through example datasets and made doc of notes
+
+_What are you planning to do next week?_
+* look into and try debugging some of the potentially smaller fixes
+  * plotting of time series with more than one dimension
+  * display of times in general tab
+  * display of units/electrodes columns in general tab
+* continue going through example datasets and adding to doc
+
+_Is anything blocking your progress?_
+* Not currently
 
 ### week of June 7
 
@@ -17,7 +34,6 @@ _What are you planning to do next week?_
 * test out making a workspace and repository with v2devOSB if possible
 
 _Is anything blocking your progress?_
-
 * Not currently
 
 ---
