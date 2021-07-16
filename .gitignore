@@ -1,2 +1,7 @@
+# python
 .idea/
+.ipynb_checkpoints
+
+# data files
 *.dat
+

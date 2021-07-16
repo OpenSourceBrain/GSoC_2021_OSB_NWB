@@ -10,6 +10,7 @@
 | [000009](https://gui.dandiarchive.org/#/dandiset/000009) | [example file](https://dandiarchive.s3.amazonaws.com/blobs/55b/2aa/55b2aa6b-3bbc-4b29-9637-e899d0ddb4e9) | Maintenance of persistent activity in a frontal thalamocortical loop | sub-anm184389_ses-20130207_behavior+ecephys.nwb| see below |
 | [000011](https://gui.dandiarchive.org/#/dandiset/000011) | [example file](https://dandiarchive.s3.amazonaws.com/blobs/a1d/c8d/a1dc8d9a-bbb6-4260-b56e-78844dbd957e) | Robust neuronal dynamics in premotor cortex during motor planning | sub-255200_ses-20140910_behavior+ecephys+ogen.nwb| see below |
 | [000016](https://gui.dandiarchive.org/#/dandiset/000016) | [example file](https://dandiarchive.s3.amazonaws.com/blobs/295/a5d/295a5d42-e07f-482e-8022-78e2cc951678) | Excitatory and inhibitory subnetworks are equally selective during decision-making and emerge simultaneously during learning | sub-mouse1-fni16_ses-161220141515.nwb | see below |
+| [000036](https://gui.dandiarchive.org/#/dandiset/000036) | [example file](https://dandiarchive.s3.amazonaws.com/blobs/82f/f37/82ff37f1-442d-46b4-b5dd-6a5ad4ec07fb) | Allen Institute Openscope - Meaningful project | |
 | [000039](https://gui.dandiarchive.org/#/dandiset/000039) | [example file](https://dandiarchive.s3.amazonaws.com/blobs/52d/3c6/52d3c6f7-2460-4c03-9bfc-db992ab60365) | Contrast tuning in mouse visual cortex with calcium imaging | sub-661968859_ses-682746585_behavior+ophys.nwb | see below |
 | [000048](https://gui.dandiarchive.org/#/dandiset/000048) | [example file](https://dandiarchive.s3.amazonaws.com/blobs/bd8/95b/bd895bc6-7a8f-46c0-8564-d94fd4a0b690) | Electrical and optical physiology in in vivo population scale two photon calcium imaging | sub-222549_ecephys+ophys.nwb | see below |
 | [000049](https://gui.dandiarchive.org/#/dandiset/000049) | [example file](https://dandiarchive.s3.amazonaws.com/blobs/2c5/2a3/2c52a341-bb7f-433f-9ade-340f1bb0bf75) | TFxSF tuning in mouse visual cortex with calcium imaging | sub-661968859_ses-681698752_behavior+ophys.nwb | see below |
@@ -19,25 +20,29 @@
 
 ## Potential features/fixes
 
-### fixes/small changes
-* experimenter ID and related publications section not always filled with info
-* time values like start time/file create date could be added to general tab
-* units and electrodes values end up being displayed as objects in general tab
-* time series plots when data has more than one dimension 
-* change color of comments in python console bc hard to see right now
+### fixes
+* ~~display experimenter ID and related publications in general tab~~
+* ~~display contents of units and electrodes objects in details tab~~  
+* display time values like file create date in general tab (need to fix display in date-time-metadata branch)
+* change color of comments in python console (fixed in osbv2 branch)
+* load files from dandi api links - issue #244
 
-### bigger features
-* Single unit rasters/mean waveforms
-* Trials/intervals/epochs table - ability to select data from specific trials
-* licks/single event time points, toggle display to visualize
-* display imaging series
-* visualization of electrodes and channels
-* have tab with processing module or show all context index from the start?
-* load up small chunk of the data to plot instead of the whole session if very big
-* local file loading or instructions on how to do that
-* ability to see size of file/progress of download
-* kill/quit command if it's taking a while
-* loading files from dandi links directly without getting redirected ones
+### plotting enhancements
+* time series plots with multi-dimensional data - issue #63
+* single unit raster plots + mean waveform plots
+* behavioral events time series with markers+lines
+* imaging series - look into example datasets
+
+### other features
+* ~~processing module tab~~
+* trials/intervals/epochs/units/electrodes table display
+* kill/quit command for plotting 
+* load chunk of data to plot instead of whole session if big 
+* see progress of download/file size/computation
+
+### related questions
+* what is the best way to add new plotting functionality?
+* what is the best widget to display table information?
 
 ## Notes from test datasets
 
