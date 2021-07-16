@@ -1,0 +1,5 @@
+pynwb
+nwbwidgets
+matplotlib
+numpy
+seaborn
