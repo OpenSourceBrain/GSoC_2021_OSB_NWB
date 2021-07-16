@@ -1,5 +1,34 @@
 ## Weekly status report for INCF
 
+### week of July 12
+
+_What have you been doing this week?_
+* finished testing and submitting processing tab PR
+* tested out .mat and .nwb patchmaster conversion code
+* got tiny-neuron-ephys data into plottable format
+
+_What are you planning to do next week?_
+* work on converting missing info from .dat files to nwb files
+* add metadata information to nwb files 
+
+_Is anything blocking your progress?_
+* Not currently
+
+### week of July 5
+
+_What have you been doing this week?_
+* got processing tab working
+* looked into single units plotting, table display
+* looked into roi response series plotting
+* finished going through test datasets and taking notes
+
+_What are you planning to do next week?_
+* get tiny-neuron-ephys data into plottable format
+* test and submit processing module PR
+
+_Is anything blocking your progress?_
+* Ran into some data importing challenges with the single units/roi plotting, left for now and will try to debug later
+
 ### week of June 28
 
 _What have you been doing this week?_
