@@ -1,5 +1,9 @@
-pynwb
-nwbwidgets
 matplotlib
 numpy
+nwbwidgets
+pandas
+pyabf
+pynwb
+roman
 seaborn
+xlrd
