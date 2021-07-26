@@ -3,7 +3,7 @@ numpy
 nwbwidgets
 pandas
 pyabf
-pynwb
+pynwb==1.3.0
 roman
 seaborn
 xlrd
