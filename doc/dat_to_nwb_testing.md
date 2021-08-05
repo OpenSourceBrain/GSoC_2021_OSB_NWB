@@ -34,12 +34,14 @@ example values given for 'index_000' acquisition/stimulus data field
 
 
 ### Notes/questions
-* splitting data into groups
-  * .mat RecTable splits data into recordings with multiple sweeps
-  * nwb file with every single sweep as an individual field, same thing in the sweep table
-  * should update sweep table data input to match the RecTable format with multiple sweeps per rec? 
-* not sure timestamps/time points in NWB file are done correctly? 
-  * when plotting all together it shows the time from within the whole recording, not an overlay
 * MEC_VC stimulus type has multiple channels/units saved, not sure yet how to address
   * when plotting, looks like stimulus?
+* If E-soln-exp not on solutions list, just list the name? Any other info to add?
+* Should the analysis module contain data processed in the way described?
+
+### To do items
+* add information from metadata spreadsheet columns from Tc to Cin
+* add support for older .dat, .pul, .pgf files that are saved separately and in non DAT2 format
+* add support for RampIVq-2s, MEC_VC, Miv_VC stimulus sets
+* add support for "Increment mode - Alternate"
     
