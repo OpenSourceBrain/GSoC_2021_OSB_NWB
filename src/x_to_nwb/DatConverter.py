@@ -33,7 +33,7 @@ log = logging.getLogger(__name__)
 
 
 class DatConverter:
-    def __init__(self, inFile, outFile, multipleGroupsPerFile=False, compression=True, existingNWBData=False):
+    def __init__(self, inFile, outFile, multipleGroupsPerFile=False, compression=True, metadata=False):
         """
         Convert DAT files, created by PatchMaster, to NWB v2 files.
 
@@ -44,7 +44,7 @@ class DatConverter:
         multipleGroupsPerFile: switch determining if multiple DAT groups per
                                file are created or not
         compression: Toggle compression for HDF5 datasets
-        addExistingNWBData: input to add  NWB metadata input that will be used in NWB file creation
+        addmetadata: input to add  NWB metadata input that will be used in NWB file creation
 
         Returns
         -------
@@ -56,7 +56,7 @@ class DatConverter:
 
         self.bundle = Bundle(inFile)
         self.compression = compression
-        self.existingNWBData = existingNWBData
+        self.metadata = metadata
 
         self._check()
 
@@ -365,7 +365,7 @@ class DatConverter:
             raise ValueError("The data element does not exist.")
 
         # if data in new amp format, check for amp trees, otherwise skip
-        version = int(self.bundle.header.Version.split("v2x")[1][:2])
+        version = int(self.bundle.header.Version.split("v2")[1][1:3])
         if version < 90:
             warnings.warn(
                 f"Skipping amp check because '{self.bundle.header.Version}' "
@@ -425,18 +425,17 @@ class DatConverter:
         # values defined by the conversion script no matter what inputs
         identifier = sha256(b"%d_" % self.bundle.header.Time + str.encode(datetime.now().isoformat())).hexdigest()
         self.session_start_time = DatConverter._convertTimestamp(self.bundle.header.Time)
-        creatorName = "PatchMaster"
-        creatorVersion = self.bundle.header.Version
-        notes = f"data generated with {creatorName} {creatorVersion}"
+
         source_script_file_name = "conversion.py"
         source_script = json.dumps(getPackageInfo(), sort_keys=True, indent=4)
 
         # values defined by user or place holder used if needed
-        metadata = self.existingNWBData
+        metadata = self.metadata
 
+        # define subject info
         subject = Subject(
-            species= metadata.get('species') or PLACEHOLDER,
-            genotype=metadata.get('genotype') or PLACEHOLDER,
+            species=metadata.get('subject_species') or PLACEHOLDER,
+            genotype=metadata.get('subject_genotype') or PLACEHOLDER,
             subject_id=metadata.get('subject_id') or PLACEHOLDER,
             description=metadata.get('subject_description') or PLACEHOLDER
         )
@@ -455,7 +454,7 @@ class DatConverter:
 
             # recording-related fields
             protocol=metadata.get('protocol') or PLACEHOLDER,
-            notes=notes,
+            notes=metadata.get('notes') or PLACEHOLDER,
 
             # file generation-related fields
             source_script=source_script,
@@ -476,7 +475,11 @@ class DatConverter:
             amp_info = self.bundle.pul
         name = DatConverter._formatDeviceString(amp_info[0][0])
 
-        return Device(name)
+        creatorName = "PatchMaster"
+        creatorVersion = self.bundle.header.Version
+        description = f"Data generated with {name} amplifier and {creatorName} {creatorVersion} software"
+
+        return Device(name=name, description=description)
 
     def _createElectrodes(self, device):
         """
@@ -490,9 +493,15 @@ class DatConverter:
         -------
         pynwb.IntracellularElectrode
         """
+        metadata = self.metadata
 
         return [
-            IntracellularElectrode(f"Electrode {x:d}", device, description=PLACEHOLDER)
+            IntracellularElectrode(name=f"Electrode {x:d}",
+                                   device=device,
+                                   description=metadata.get('electrode_description') or PLACEHOLDER,
+                                   filtering=metadata.get('electrode_filtering') or PLACEHOLDER,
+                                   resistance=metadata.get('electrode_resistance') or PLACEHOLDER,
+                                   seal=metadata.get('electrode_seal') or PLACEHOLDER)
             for x in self.electrodeDict.values()
         ]
 
@@ -543,6 +552,8 @@ class DatConverter:
 
                         if not len(stimset):
                             print(f"Can not yet recreate stimset {series.Label}")
+                            continue
+                        elif stimset == 'skipped':
                             continue
 
                         name, counter = createSeriesName("index", counter, total=self.totalSeriesCount)
