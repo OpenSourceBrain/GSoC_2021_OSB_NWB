@@ -3,6 +3,11 @@
 .ipynb_checkpoints
 *pyc
 
-# data files
+# patchmaster data files
 *.dat
+*.pgf
+*.pul
+
+# dandi data files
+test_data/sub*
 
