@@ -1,5 +1,6 @@
 import warnings
 
+from types import SimpleNamespace
 from .hr_nodes import (
     Pulsed,
     StimulusTemplate,
@@ -33,8 +34,7 @@ class Bundle:
         self.file_name = file_name
 
         with self:
-            if self.fh.read(4) != b"DAT2":
-                raise ValueError("No support for other files than 'DAT2' format")
+            file_format = self.fh.read(4).decode()
 
             self.fh.seek(0)
 
@@ -48,12 +48,25 @@ class Bundle:
                 self.fh.seek(0)
                 self.header = BundleHeader(self.fh, endian)
 
-            # catalog extensions of bundled items
-            self.catalog = {}
-            for item in self.header.BundleItems:
-                item.instance = None
-                ext = item.Extension
-                self.catalog[ext] = item
+            if file_format == "DAT2":
+                # catalog extensions of bundled items
+                self.catalog = {}
+                for item in self.header.BundleItems:
+                    item.instance = None
+                    ext = item.Extension
+                    self.catalog[ext] = item
+                self.isBundled = True
+
+            elif file_format == 'DAT1':
+                # catalog extensions of bundled items
+                extensions = ('.pul','.pgf','.dat')
+                self.catalog = {}
+                for ext in extensions:
+                    item = SimpleNamespace(instance=None, Extension=ext, Start=0, Length=None)
+                    self.catalog[ext] = item
+                self.isBundled = False
+            else:
+                raise ValueError("No support for other files than 'DAT1' or 'DAT2' format")
 
             if not self.header.Version.startswith("v2x90"):
                 warnings.warn(
@@ -144,7 +157,12 @@ class Bundle:
             if ext == ".dat":
                 item.instance = cls(self)
             else:
+                if not self.isBundled:
+                    self.fh.close()  # close the .dat file
+                    filename = self.file_name.replace('.dat', ext)
+                    self.fh = open(filename, "rb")  # open the relevant file
                 self.fh.seek(item.Start)
+
                 # read endianess magic
                 magic = self.fh.read(4)
                 if magic == b"eerT":
