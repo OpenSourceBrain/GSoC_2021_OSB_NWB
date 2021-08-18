@@ -7,7 +7,7 @@ from abc import ABC, abstractmethod
 
 import numpy as np
 import scipy.signal
-
+import warnings
 
 def getSegmentClass(stimRec, channelRec, segmentRec):
     """
@@ -72,7 +72,9 @@ class Segment(ABC):
         self.amplitudeScale = 1e3
 
         if not channelRec.StimToDacID["UseStimScale"]:
-            raise ValueError("The flag UseStimScale of StimToDacID being false is not supported.")
+            warnings.warn(
+                f"The flag UseStimScale of StimToDacID was false. Scaling may not be correct."
+            )
 
     def __str__(self):
         return ("xDelta={}, yDelta={}, " "duration={}, sampleInterval={}" "amplitudeScale={}").format(

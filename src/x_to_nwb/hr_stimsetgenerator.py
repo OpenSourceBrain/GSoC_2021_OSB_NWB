@@ -56,7 +56,7 @@ class StimSetGenerator:
 
             if stimRec.ActualDacChannels != 1: # TODO - more robust support for ActualDacChannels > 1
                 warnings.warn(
-                    f"Unsupported ActualDacChannels lengths for "
+                    f"ActualDacChannels length is longer than 1. Reconstruction may be missing data for "
                     f"sweep index {stimRec_idx} and ChannelRecord index {channelRec_index}."
                 )
 
