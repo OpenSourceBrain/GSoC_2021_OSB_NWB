@@ -81,7 +81,12 @@ def convert(
             for f in matchingFiles:
                 os.remove(f)
         else:
-            raise ValueError(f"The output file(s) {matchingFiles} already exist.")
+            print(
+                f"The output file(s) {matchingFiles} already exist. Returning existing filename(s). "
+                f"Set overwrite to True if you would like to generate new files"
+            )
+            return matchingFiles
+
 
     if ext == ".abfv1":
         if outputMetadata:
@@ -120,7 +125,10 @@ def convert(
     else:
         raise ValueError(f"The extension {ext} is currently not supported.")
 
-    return outFile
+    # get all filenames if multiple after conversion
+    matchingFiles = glob.glob(root + "*.nwb")
+
+    return matchingFiles
 
 
 def convert_cli():
