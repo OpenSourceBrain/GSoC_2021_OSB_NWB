@@ -1,47 +1,47 @@
-# Patchmaster DAT file to NWB testing
+# Patchmaster DAT file to NWB testing notes
 
-### testing conversion with HEKA-Patchmaster-Importer and x-to-nwb
-example values given for 'index_000' acquisition/stimulus data field
-
-| Mat file field | Mat file value | NWB file field | NWB file value | Notes |
-| ----------- | -----------| ----------- | ----------- | ----------- |
-| Experiment name | 'ASH300' | group_label | ASH300 |  |
-| Rs | Inf | whole_cell_series_resistance_comp | nan | same value? Rs value also stored in the metadata sheet|
-| Rs_fractioncomp | nan | resistance_comp_correction | nan | same value? converted to new name in DatConverter.py| 
-| Cm | 0 | Cm_fast | 0 | same value? also have Cm_slow |
-| Stimulus | 'ct_neg' | data.series_label | 'ct_neg' | |
-| TimeUnit | 's' | data.starting_time_unit | 'seconds' | |
-| ChUnit | A | data.unit | 'amperes' | |
-| RecMode | 'whole-cell v-clamp' | neurodata_type | VoltageClampSeries | |
-| SR | 10000 | rate | 10000| |
-| TimeStamp | 19-Mar-2010 14:50:18 | timestamps_reference_time | 2010-03-19T...||
-| dataRaw | 200xN traces | data | 200x1||
-| RecTable | row for each rec w/multiple sweeps per rec | SweepTable | 1 row per sweep, all unique series id | think sweep table needs to be edited |
-| stimUnit | V | stimulus.presentation['index_000'].data.units | 'volts' ||
-| stimWave.DA_3 | 200x1 vals of -0.6 | stimulus.presentation['index_000'].data | 200x1 vals of -60.0 ||
-| stimWave.DAC_0 | 76x1 vals of 0| | | not sure what this value means?|
-| Temp | 20 | | | |
-| ChName | 'Imon' | | | |
-| Vhold | 0 | | |
-| Rs_uncomp | inf | | | |
-| | | Cm_slow | nan | |
-| | | Cm_slow.unit | farads | |
-| | | whole cell_capacitance_comp| nan | |
-| | | resistance_comp_bandwith | nan | |
-| | | resistance_comp_prediction | nan | |
-| | | devices | EPC10-1-0 with LIH1600 | |
-| | | description | PatchMaster v2x32, 18-Jan-2008 | |
-
-
-### Notes/questions
-* MEC_VC stimulus type has multiple channels/units saved, not sure yet how to address
-  * when plotting, looks like stimulus?
-* If E-soln-exp not on solutions list, just list the name? Any other info to add?
-* Should the analysis module contain data processed in the way described?
+### Remaining questions
+* Is the metadata mapping accurate? Or how should the other values be filled in? (See table below)
+* What data is acquired on each of the channels when there are multiple?
+  * ex. when acquisition channel 2 and stimulus channel 1 are almost but not quite the same
+  * ex. sometimes one stimulus channel covers a very short time period
+* Paper describes recording pre/during/post amiloride, are these separated in the experiment file?
+* For files with multiple blocks with the same series label, should these be described differently or are they all the same?
 
 ### To do items
-* add information from metadata spreadsheet columns from Tc to Cin
-* add support for older .dat, .pul, .pgf files that are saved separately and in non DAT2 format
-* add support for RampIVq-2s, MEC_VC, Miv_VC stimulus sets
+* compare plotting output with example figures or data to confirm units and stimulus reconstruction are correct
+* confirm metadata descriptions are correct and update any other missing information
 * add support for "Increment mode - Alternate"
-    
+* convert remaining files
+
+### Current metadata mapping
+Note: NWB fields with ["value"] indicates that it's a string that's included in the description/notes attribute, not a unique NWB field 
+
+| Metadata field | Metadata unit | NWB file field | NWB file unit | Notes |
+| ----------- | -----------| ----------- | ----------- | ----------- |
+| Cell ID | --- | subject.subject_id | --- | |
+| Cell | --- | subject.description["cell type"] | --- | |
+| Strain | --- | subject.genotype | --- | |
+| I-soln | --- | notes["Internal solution"] |  --- | I = internal?|
+| E-soln-ctl | --- | notes["External solution - control"] |  --- | E = external?|
+| E-soln-exp | --- | notes["External solution - experimental"] |  --- | E = external? |
+| Tc | °C | notes["Temperature - cell"] | need to add | c = cell? |
+| Te | °C | notes["Temperature - enivornment"] |  need to add | e = environment?|
+| Fc* | kHz | electrode.filtering | need to add | low pass cutoff? high pass cutoff?|
+| Fs | kHz | --- | --- | |
+| Probe | --- | session_description - probe id | --- | probe id? |
+| M-VC | --- | session_description - force amplitude | µN | force of the probe? M-VC = MEC-VC? |
+| M-CC | --- | session_description - force amplitude | µN | force of the probe? M-CC = MEC-CC? |
+| SM-VC | --- | --- | --- | |
+| Miv | --- | --- |  µN | force of the probe? |
+| Vramp | control | --- | --- ||
+| Vramp | Gd+ | --- | --- ||
+| Rp | MΩ | electrode.resistance | need to convert | Rp = pipette resistance? |
+| Rs | MΩ | electrode.seal | need to add | Rs = seal resistance?|
+| Cin | pF | --- | --- | whole_cell_capacitance_comp? capacitance compensation?|
+| L (Unscaled)| cm | --- |||
+| W (Unscaled) | cm | --- |||
+| A (Unscaled) | cm | --- |||
+| L (Scaled and Corrected) | µm | subject.description["length"] | µm | use scaled vs unscaled?|
+| W (Scaled and Corrected) | µm | subject.width["length"] | µm | use scaled vs unscaled?|
+| A (Scaled and Corrected) | µm | subject.area["length"]| µm | use scaled vs unscaled? A = area?|
