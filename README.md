@@ -39,7 +39,7 @@ Example converted data file shown here:
 
 ### How to use
 
-The data can be converted with the following command: 
+The data can be converted by running the following command while in the src directory: 
 
 ```python
 python goodman_to_nwb_conversion.py
