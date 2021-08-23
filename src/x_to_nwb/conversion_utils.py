@@ -16,6 +16,7 @@ from pynwb.icephys import (
     CurrentClampSeries,
     VoltageClampSeries,
     IZeroClampSeries,
+    PatchClampSeries
 )
 
 try:
@@ -78,6 +79,19 @@ def getAcquiredSeriesClass(clampMode):
     else:
         raise ValueError(f"Unsupported clamp mode {clampMode}.")
 
+def getSeriesClass(name):
+    if name == 'VoltageClampSeries':
+        return VoltageClampSeries
+    elif name == 'CurrentClampSeries':
+        return CurrentClampSeries
+    elif name == 'IZeroClampSeries':
+        return IZeroClampSeries
+    elif name == 'PatchClampSeries':
+        return PatchClampSeries
+    elif hasattr(name, 'neurodata_type'):
+        return name
+    else:
+        raise ValueError(f"Undefined series class {name}.")
 
 def createSeriesName(prefix, number, total):
     """

@@ -21,6 +21,7 @@ from .conversion_utils import (
     parseUnit,
     getStimulusSeriesClass,
     getAcquiredSeriesClass,
+    getSeriesClass,
     createSeriesName,
     convertDataset,
     getPackageInfo,
@@ -33,7 +34,8 @@ log = logging.getLogger(__name__)
 
 
 class DatConverter:
-    def __init__(self, inFile, outFile, multipleGroupsPerFile=False, compression=True, metadata=False):
+    def __init__(self, inFile, outFile, multipleGroupsPerFile=False, compression=True, metadata=False,
+                 overrideSeriesType=False):
         """
         Convert DAT files, created by PatchMaster, to NWB v2 files.
 
@@ -44,7 +46,7 @@ class DatConverter:
         multipleGroupsPerFile: switch determining if multiple DAT groups per
                                file are created or not
         compression: Toggle compression for HDF5 datasets
-        addmetadata: input to add  NWB metadata input that will be used in NWB file creation
+        metadata: input to add  NWB metadata input that will be used in NWB file creation
 
         Returns
         -------
@@ -57,6 +59,7 @@ class DatConverter:
         self.bundle = Bundle(inFile)
         self.compression = compression
         self.metadata = metadata
+        self.series_type_overrides = overrideSeriesType
 
         self._check()
 
@@ -587,6 +590,8 @@ class DatConverter:
                             conversion = 1e-3
                         elif clampMode == I_CLAMP_MODE:
                             conversion = 1e-12
+                        else:
+                            conversion = 1.0
 
                         seriesClass = getStimulusSeriesClass(clampMode)
 
@@ -631,7 +636,8 @@ class DatConverter:
                     cycle_id = createCycleID(
                         [group.GroupCount, series.SeriesCount, sweep.SweepCount], total=self.totalSeriesCount
                     )
-                    for trace in sweep:
+                    for channel, trace in enumerate(sweep):
+
                         name, counter = createSeriesName("index", counter, total=self.totalSeriesCount)
                         data = convertDataset(self.bundle.data[trace], self.compression)
 
@@ -663,8 +669,11 @@ class DatConverter:
                         clampMode = DatConverter._getClampMode(ampState, cycle_id, trace)
                         seriesClass = getAcquiredSeriesClass(clampMode)
                         stimulus_description = series.Label
+                        if (stimulus_description in self.series_type_overrides) and \
+                            (self.series_type_overrides[stimulus_description][channel]) is not None:
+                            seriesClass = getSeriesClass(self.series_type_overrides[stimulus_description][channel])
 
-                        if clampMode == V_CLAMP_MODE:
+                        if seriesClass.neurodata_type == "VoltageClampSeries":
 
                             if ampState and ampState.RsOn:
                                 resistance_comp_correction = ampState.RsFraction
@@ -709,7 +718,7 @@ class DatConverter:
                                 whole_cell_series_resistance_comp=whole_cell_series_resistance_comp,
                             )  # noqa: E501
 
-                        elif clampMode == I_CLAMP_MODE:
+                        elif seriesClass.neurodata_type == "CurrentClampSeries":
                             bias_current = trace.Holding
 
                             if ampState and (ampState.AutoCFast or (ampState.CanCCFast and ampState.CCCFastOn)):
@@ -740,6 +749,21 @@ class DatConverter:
                                 bridge_balance=bridge_balance,
                                 stimulus_description=stimulus_description,
                                 capacitance_compensation=capacitance_compensation,
+                            )
+                        elif seriesClass.neurodata_type == "PatchClampSeries":
+                            acquistion_data = seriesClass(
+                                name=name,
+                                data=data,
+                                sweep_number=np.uint64(cycle_id),
+                                electrode=electrode,
+                                gain=gain,
+                                unit='a.u.',
+                                resolution=resolution,
+                                conversion=conversion,
+                                starting_time=starting_time,
+                                rate=rate,
+                                description=description,
+                                stimulus_description=stimulus_description,
                             )
                         else:
                             raise ValueError(f"Unsupported clamp mode {clampMode}.")

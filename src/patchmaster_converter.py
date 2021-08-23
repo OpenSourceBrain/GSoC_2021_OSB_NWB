@@ -7,6 +7,13 @@ class PatchmasterConverter:
         self.metadata = metadata
         self.base_filename = base_filename
 
+        # Override the data being automatically defined as VoltageSeries, CurrentSeries
+        # None uses default type
+        self.series_type_override = {"MEC_CC": (None, "PatchClampSeries"),
+                                     "MEC_VC": (None, "PatchClampSeries"),
+                                     "Miv_VC": (None, "PatchClampSeries")
+                                     }
+
     def get_file_path(self):
         # check that file exists
         dat_filename = f"..//test_data//{self.base_filename}.dat"
@@ -22,6 +29,9 @@ class PatchmasterConverter:
     def convert_dat_to_nwb(self, overwrite=False):
         # convert the dataset
         dat_filename = self.get_file_path()
-        nwb_filename = x_to_nwb.convert(dat_filename, overwrite=overwrite, metadata=self.metadata)
+        nwb_filename = x_to_nwb.convert(dat_filename,
+                                        overwrite=overwrite,
+                                        metadata=self.metadata,
+                                        overrideSeriesType=self.series_type_override)
 
         return nwb_filename
