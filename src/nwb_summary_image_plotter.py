@@ -47,7 +47,8 @@ class NWBSummaryImagePlotter:
 
             if mech_stim_info is not None and self.is_mech_stim(label):
                 mech_stim_amp = mech_stim_info[label]
-                ax_stim.text(0.55, 0.75, f"Mechanical stim:\n {mech_stim_amp} (µN)", transform=ax_stim.transAxes)
+                # ax_stim.text(0.55, 0.75, f"Mechanical stim:\n {mech_stim_amp} (µN)", transform=ax_stim.transAxes)
+                # Not sure these values represent the mechanical stimulation amplitude so will remove until confirmed
 
             for sweep in sweep_numbers:
                 sweep_label = sweep_table.label[sweep_table.sweep_number == sweep].values[0]

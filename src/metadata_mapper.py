@@ -114,8 +114,7 @@ class MetadataMapper:
         if probe_id == 'nw':
             mechanical_stim_metadata = 'No mechanical stimulation delivered'
         else:
-            mechanical_stim_metadata = f"Mechanical stimulation delivered with probe {probe_id}. " \
-                                       f"Force amplitudes (µN) for each of the patch clamp series: {stim_values}"
+            mechanical_stim_metadata = f"Mechanical stimulation delivered with probe {probe_id}: {stim_values}"
 
         return mechanical_stim_metadata
 
@@ -128,7 +127,8 @@ class MetadataMapper:
         if solution == 'np':
             ingredients = 'no fast perfusion, gravity fed'
         elif solution not in df:
-            ingredients = solution
+            ingredients = f'{solution} - data acquired pre, during, and post solution perfusion.' \
+                          f'Data measured may be affected by the solution'
         else:
             ingredients = dict(zip(df[solution]['Ingredients'], df[solution]['Molarity']))
 
