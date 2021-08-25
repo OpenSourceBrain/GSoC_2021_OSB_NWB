@@ -1,7 +1,8 @@
 # python
 .idea/
 .ipynb_checkpoints
-*pyc
+__pycache__/
+*.pyc
 
 # patchmaster data files
 *.dat
