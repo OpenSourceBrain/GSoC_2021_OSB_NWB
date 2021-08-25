@@ -35,8 +35,7 @@ def convert_goodman_to_nwb(metadata_filename, cell_ids, overwrite=False):
 
 if __name__ == "__main__":
     metadata_filename = '..//test_data//ASH-metadata_12_III_29.xls'
-    #cell_list = ['ASH097', 'ASH116', 'ASH230', 'ASH287']
-    cell_list = ['ASH287']
+    cell_list = ['ASH097', 'ASH116', 'ASH230', 'ASH287']
     overwrite = True
 
     convert_goodman_to_nwb(metadata_filename, cell_list, overwrite)

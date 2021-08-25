@@ -11,7 +11,8 @@ class PatchmasterConverter:
         # None uses default type
         self.series_type_override = {"MEC_CC": (None, "PatchClampSeries"),
                                      "MEC_VC": (None, "PatchClampSeries"),
-                                     "Miv_VC": (None, "PatchClampSeries")
+                                     "Miv_VC": (None, "PatchClampSeries"),
+                                     "RampIVq-2s": (None, "PatchClampSeries")
                                      }
 
     def get_file_path(self):
